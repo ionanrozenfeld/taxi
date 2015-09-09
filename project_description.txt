@@ -1,0 +1,5 @@
+In this project I'd like to study patterns in public transportation using data from New York City taxi trips.
+The goal is to provide information to make the day of a taxi driver more efficient in terms of making more money
+while driving less and make the working day more predictable.
+
+Initially I will study 

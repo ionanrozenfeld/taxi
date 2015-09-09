@@ -1,0 +1,62 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1347\cocoasubrtf570
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\froman\fcharset0 Times-Roman;}
+{\colortbl;\red255\green255\blue255;\red22\green100\blue185;\red38\green38\blue38;}
+\margl1440\margr1440\vieww19220\viewh13200\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 Video at: {\field{\*\fldinst{HYPERLINK "http://youtu.be/hMnnlfiau10"}}{\fldrslt 
+\f1\fs26 \cf2 \expnd0\expndtw0\kerning0
+http://youtu.be/hMnnlfiau10}}
+\f1\fs26 \cf3 \expnd0\expndtw0\kerning0
+ \
+\
+time series plot: https://goo.gl/photos/bd4S4e4Lq91cyHjG7\
+
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 \
+distance plot: https://goo.gl/photos/A8QKKB11qjGQEMAy9\
+\
+\
+Description:\
+\
+In this project I will study patterns in transportation using data from New York City taxi trips available at http://chriswhong.com/open-data/foil_nyc_taxi/. The goal is to provide actionable information to make the day of a taxi driver more efficient in terms of making more money while driving less and make the working day more predictable. This information will help drivers and taxi agents to make informed decision on where to be (or go) at a specific time.\
+\
+Initially I will make a study of correlations between different quantities, such as time of trip, distance, time of pick-up, location of pick-up, fare. Two plots have been provided, to provide concrete insight into the feasibility of this project, that show how the mean traveled distance depends on the pick-up time on a typical day (https://goo.gl/photos/A8QKKB11qjGQEMAy9) and a time series of the fraction of trips starting at two NYC neighborhoods of equal area (one within Chelsea and the other in midtown) throughout a typical day (
+\f1\fs26 \cf3 \expnd0\expndtw0\kerning0
+https://goo.gl/photos/bd4S4e4Lq91cyHjG7
+\f0\fs24 \cf0 \kerning1\expnd0\expndtw0 ). This basic time series already presents useful, practical data: Chelsea (red \'91+\'92 data points in plot) has more travel activity during the nights while midtown (blue circles in plot) has a peak of activity during the working hours, especially around 3pm.\
+\
+At the end of this project, I will provide a tool, that I call a \'93decision map,\'94 so that, given the current location of a taxi, the driver can determine (according to the driver\'92s constrains) where to drive in order to maximize the chance for a desired outcome. Outcomes might be a specific drop-off location for the next trip, fare amount, time travel or a combination of those. This tool will be able to answer questions such as, given the current position of the taxi, in which direction should the taxi go to increase the chances to pick up a passenger that will travel in a specific direction, and a given distance or, given a starting working time, to what locations should the taxi go to maximize the changes of collecting a specific amount of money at the end of the day.\
+\
+I believe this kind of information will improve the working experience of taxi drivers and agents by increasing predictability. Although taxis are highly regulated in NYC (for example, drivers cannot pick up more people while there is a passenger in the taxi), it will also provide a tool for competing with modern, more unregulated, transportations systems, such as Uber. In addition, improving efficiency will allow for drivers to spend less gas and, in turn, have positive implications to environmental conservation.\
+\
+\
+\
+\
+The goal is to make a taxi driver\'92s day as predictable as possible.\
+\
+0) Geographical distribution of taxis per hour (using pick-up and drop-off times and locations,i.e.,if a taxi dropped off someone at location A at 2pm, then we assume it\'92s available to pick up someone else).\
+1) Correlation between pick-up and drop-off points.\
+2) pick-up density map (number of pick-ups per hour per area); for example, I want to know as a taxi driver in which direction I should drive to increase my chance to pick-up someone as a function of time.\
+3) Correlation between pick-up location and trip distance (hourly breakdown).\
+4) Correlation between pick-up and fare\
+\
+5) Spin-off: From the point of few of a potential passenger, I\'92d like to know what are the chances the I\'92ll find an available taxi at a specific location at a specific time.\
+\
+Plots to submit now (pick two):\
+\
+1) Pick-up time vs. mean length of trip\
+2) Daily time series of pick-up for a specific location (an area of three blocks by three blocks or so).\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\fs48 \cf0 script:\
+\
+If I was a taxi driver, I\'92d want to make my day as predictable as possible. How many trips am I going to make, how long will they be, how much money I\'92ll make. Also toward the end of the day I\'92d want to take a trip that leaves me as close to home as possible so that then I can go home and rest, without having to drive across town (even if that\'92s not the most profitable trip).\
+\
+Using NYC taxi data, I\'92m going to provide information to taxi drivers so that they can make straightforward decisions that will improve their working experience.\
+\
+I will study 11GB of data on NYC taxi pick-up and drop-off location, time, and fare over several years, and look at how these different quantities are related to each other. At the end of the project I will be able to provide a decision map (somewhat like a topographical map) that will allow taxi drivers to predict what their next trip is, what the fare will be, and what the drop-off location is. \
+\
+This data can also be useful for taxis to compete with services like Uber. Although taxis are more regulated (they have to be stopped by a person in the street, cannot be called by phone, and cannot pick up other people while there is a passenger), they \
+\
+(?)This project will also be useful to passengers as they\'92ll be able to increase their chances to find an available taxi.}
