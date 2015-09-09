@@ -283,17 +283,9 @@ $( document ).ready(code_toggle);
 <h2 id="TaxiStat">TaxiStat<a class="anchor-link" href="#TaxiStat">&#182;</a></h2><p>In this project I analyze a database containing over 170,000,000 taxi trips <br />
 in NYC over the year 2013.</p>
 <p>These are some dataset facts:</p>
-<p>-More than 170,000,000 trips.</p>
+<p>-Provided by the TLC of NYC.</p>
 <p>-About 18 GB of data</p>
 <p>-Data was imported into a MySQL database and is processed using Pandas and Numpy.</p>
-<p>The goal of the project is to provide a tool (a website) for taxi drivers and taxi<br />
-and vendors that will allow them to answer the following question:</p>
-<p>Given my current location, where should I go to increase my chances to pick up a <br />
-passenger that will make a trip of length <em>l</em>, and result in a fare amount <em>f</em>?</p>
-<p>Here I'm showing a preliminary analysis that will give us a sense of<br />
-of broad taxi trip patterns in NYC. This is essential to understand<br />
-typical trends (for example, weekends might not have the same pattern<br />
-of weekdays).</p>
 
 </div>
 </div>
@@ -564,22 +556,7 @@ of weekdays).</p>
 </div>
 
 </div>
-    </div></section>
-    </section><section>
-    <section>
-    
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As an example, let's assume I want to look at patterns within a day.<br />
-t1 = '2013-01-01 00:00:00'<br />
-t2 = '2013-01-02 00:00:00'</p>
-
-</div>
-</div>
-</div><div style=display:none>
+    </div><div style=display:none>
     
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -628,9 +605,7 @@ t2 = '2013-01-02 00:00:00'</p>
 </div>
 
 </div>
-    </div></section>
-    </section><section>
-    <section>
+    </div><div style=display:none>
     
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -644,7 +619,8 @@ that I'm not importing into the DataFrame for now.</p>
 
 </div>
 </div>
-</div></section>
+</div>
+    </div></section>
     </section><section>
     <section>
     
@@ -792,6 +768,19 @@ that I'm not importing into the DataFrame for now.</p>
 </div>
 </div>
 
+</div></section>
+    </section><section>
+    <section>
+    
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's look at taxi patterns for January 1, 2013 ...</p>
+
+</div>
+</div>
 </div><div style=display:none>
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -858,9 +847,7 @@ that I'm not importing into the DataFrame for now.</p>
 </div>
 
 </div>
-    </div></section>
-    </section><section>
-    <section>
+    </div><div style=display:none>
     
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -872,7 +859,8 @@ at the mean fare amount, trip distance, trip time, and number of trips.</p>
 
 </div>
 </div>
-</div><div style=display:none>
+</div>
+    </div><div style=display:none>
     
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -953,9 +941,7 @@ at the mean fare amount, trip distance, trip time, and number of trips.</p>
 </div>
 </div>
 
-</div></section>
-    </section><section>
-    <section>
+</div><div style=display:none>
     
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
@@ -968,7 +954,8 @@ and also another 3 by 3 area around midtown.</p>
 
 </div>
 </div>
-</div><div style=display:none>
+</div>
+    </div><div style=display:none>
     
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
