@@ -7,17 +7,23 @@
 	</head>
 	
 	<body>
-		<div>
-  			<h1>Enter stock symbol</h1>
-		</div>
-	    <form id='stock' method='post' action='index' >
+		<h1>TaxiStat: Understanding NYC activity through taxi data.</h1>
+	    <form id='menu' method='post' action='index' >
 	      <p>
-	    Name: <input type='text' name='stock_symbol' autocomplete="off"/><br />
-		<input type="checkbox" name="closing_price" value="Y"> Closing price<br />
-		<input type="checkbox" name="volume" value="Y"> Volume<br />
+	    Enter you location: <input type='text' name='address' autocomplete="off"/><br />
+	    Day of the week: <input type='text' name='dayofweek' autocomplete="off"/><br />
+		Time of the day: <input type='text' name='timeofday' autocomplete="off"/><br />
+		<!--or <input type="checkbox" name="current_location" value="Y"> use current location<br />
+		
+		<input type="checkbox" name="max" value="Y"> I want to pick up a new passenger quickly<br />
+		Options:
+		<input type="checkbox" name="max" value="Y"> I want to pick up a new passenger quickly<br />
+		<input type="checkbox" name="fare" value="Y"> I want to maximize the fare amount<br />
+		<input type="checkbox" name="length" value="Y"> I prefer shorter trips<br />
+		<input type="checkbox" name="traffic" value="Y"> Display traffic in map<br />
 		</p>
-	      <p>
-	    <input type='submit' value='Submit stock' />
+	      <p>-->
+	    <input type='submit' value='Show me!' />
 	      </p>
 	    </form>
 		
