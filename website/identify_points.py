@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_center_id(px,py):
+def get_center_id(px,py,x_min,x_max,y_min,y_max,mesh_space):
     """
     For a given point p=(px,py) within the boundary (x_min,x_max,y_min,y_max)
     it returns an integer that identifies the location of that point
@@ -22,7 +22,7 @@ def get_center_id(px,py):
     """    
     
     if px<x_min or px>x_max or py<y_min or py>y_max:
-        return -1;
+        return None
         #raise ValueError("Error: data point outside of grid boundaries")
     
     x,rx=np.linspace(x_min,x_max,(x_max-x_min)/mesh_space,retstep="True")
@@ -33,7 +33,7 @@ def get_center_id(px,py):
     return l
     
 
-def get_center_coordinates(l):
+def get_center_coordinates(l,x_min,x_max,y_min,y_max,mesh_space):
     """
     This is the inverse of function <get_center_id>.
     For an integer value l it returns a tuple p=(x,y) where
@@ -52,9 +52,9 @@ def get_center_coordinates(l):
     
     x,rx=np.linspace(x_min,x_max,(x_max-x_min)/mesh_space,retstep="True")
     y,ry=np.linspace(y_min,y_max,(y_max-y_min)/mesh_space,retstep="True")    
-    
+
     if l<=0 or l>len(x)*len(y):
-        return -1
+        return None
         #raise ValueError("Value of l is not in the grid")
         
     p = (x[(l%len(x))-1],y[(l-1)/len(x)])
@@ -63,11 +63,11 @@ def get_center_coordinates(l):
 
 
 if __name__ == '__main__':
-    x_min = -74.293396 #longitude  SW: 40.481965, -74.293396 NE:40.911486, -73.733866
-    x_max = -73.733866 #longitude
-    y_min = 40.481965 #latitude
-    y_max = 40.911486 #latitude
-    mesh_space = 0.01
+    x_min = -75.500000 #longitude
+    x_max = -71.750000 #longitude
+    y_min = 39.853000 #latitude
+    y_max = 41.430000 #latitude
+    mesh_space = 0.006
     
     
     #x_min = 1.5
@@ -92,6 +92,6 @@ if __name__ == '__main__':
     l = get_center_id(s[0],s[1],x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
     print l
     
-    l=332
+    #l=94004
     p = get_center_coordinates(l, x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
     print p

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_center_id(px,py,x_min=-75.500000,x_max=-71.750000,y_min=39.853000,y_max=41.430000,mesh_space=0.006):
+def get_center_id(px,py,x_min,x_max,y_min,y_max,mesh_space):
     """
     For a given point p=(px,py) within the boundary (x_min,x_max,y_min,y_max)
     it returns an integer that identifies the location of that point
@@ -33,7 +33,7 @@ def get_center_id(px,py,x_min=-75.500000,x_max=-71.750000,y_min=39.853000,y_max=
     return l
     
 
-def get_center_coordinates(l,x_min=-75.500000,x_max=-71.750000,y_min=39.853000,y_max=41.430000,mesh_space=0.006):
+def get_center_coordinates(l,x_min,x_max,y_min,y_max,mesh_space):
     """
     This is the inverse of function <get_center_id>.
     For an integer value l it returns a tuple p=(x,y) where
