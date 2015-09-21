@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 from identify_points import get_center_id, get_center_coordinates
 import mysql.connector
+import pickle
 
 from bokeh.browserlib import view
 from bokeh.document import Document
@@ -49,48 +50,50 @@ def index():
         
         return render_template('index.html')
     else:
-        #app.address = request.form['address']
-        #app.current_location = request.form['current_location']
-        #if request.form.get("traffic"):
-        #    app.traffic = request.form['traffic']
-        #else:
-        #    app.traffic = False
-        #app.optimize = request.form['radial']        
-        #if app.current_location == "" and app.current_location == False:
-        #    app.msg = 'You must either enter your desired address or use your current location.'
-        #    return render_template('error_page.html', msg = app.msg)
+        if request.form.get("address"):
+            app.address = request.form['address']
+        else:
+            app.address = False
+        app.dayofweek = request.form['dayofweek']        
+        
+        if app.address == False:
+            app.msg = 'You must enter your desired address.'
+            return render_template('error_page.html', msg = app.msg)
+                
+        params = {'address':str(app.address)}        
+        r=(requests.get('https://maps.googleapis.com/maps/api/geocode/json',params=params)).json()
+        
+        #r = r.json()
+        #print r['results'][0]['geometry']['location']['lat']
+        
+        app.my_latitude = r['results'][0]['geometry']['location']['lat']
+        app.my_longitude = r['results'][0]['geometry']['location']['lng']
+                
+        app.x_min = -74.293396 #longitude  SW: 40.481965, -74.293396 NE:40.911486, -73.733866
+        app.x_max = -73.733866 #longitude
+        app.y_min = 40.481965 #latitude
+        app.y_max = 40.911486 #latitude
+        app.mesh_space = 0.01
 
-        x_min = -75.500000 #longitude
-        x_max = -71.750000 #longitude
-        y_min = 39.853000 #latitude
-        y_max = 41.430000 #latitude
-        mesh_space = 0.006
+        if app.my_latitude < app.y_min or app.my_latitude >= app.y_max or app.my_longitude < app.x_min or app.my_longitude>= app.x_max or app.address == "" or app.address == False:
+            app.msg = 'The address you entered is outside the boundaries of NYC.'
+            return render_template('error_page.html', msg = app.msg)
+
+        app.centers_x,app.centers_rx=np.linspace(app.x_min,app.x_max,(app.x_max-app.x_min)/app.mesh_space,retstep="True")
+        app.centers_y,app.centers_ry=np.linspace(app.y_min,app.y_max,(app.y_max-app.y_min)/app.mesh_space,retstep="True")
+                
+        app.my_center_id = get_center_id(app.my_longitude,app.my_latitude,x_min=app.x_min,x_max=app.x_max,y_min=app.y_min,y_max=app.y_max,mesh_space=app.mesh_space)
         
-        centers_x,centers_rx=np.linspace(x_min,x_max,(x_max-x_min)/mesh_space,retstep="True")
-        centers_y,centers_ry=np.linspace(y_min,y_max,(y_max-y_min)/mesh_space,retstep="True")
         
-        my_latitude = 40.748347 
-        my_longitude = -73.999425
-        my_datetime = pd.to_datetime('2015-09-15 15:00:00')
-        mesh_space = 0.006 #Corresponds to an area of about 4 by 4 blocks in Manhattan
-        time_resolution_in_minutes = 30
-        my_day_of_week = my_datetime.dayofweek
-        my_time = my_datetime.time()
-        time_delta = timedelta(minutes=time_resolution_in_minutes)
-        my_time_plus_delta = (my_datetime + time_delta).time()
+        app.input = open('network_mesh_space=0.01_day='+str(app.dayofweek)+'.pickle','rb')        
+        app.network_df = pickle.load(app.input)
+        (app.input).close()
+
+        #input = open('../main_data_space=0.01_day='+str(app.dayofweek)+'.pickle','rb')
+        #data_df = pickle.load(input)
+        #input.close()
         
-        my_center_id = get_center_id(my_longitude,my_latitude,x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
-        
-        sql_query = 'SELECT taxi_trip.id, taxi_trip.fare_amount, taxi_trip.trip_distance, taxi_trip.trip_time_in_secs, taxi_trip.pickup_longitude, taxi_trip.pickup_latitude, taxi_trip.dropoff_longitude, taxi_trip.dropoff_latitude, trip_centers.pickup_center, trip_centers.dropoff_center FROM taxi_trip JOIN trip_centers ON (taxi_trip.id = trip_centers.id) WHERE WEEKDAY(pickup_datetime) = '+str(my_day_of_week)+ ' AND TIME(pickup_datetime) >= "' + str(my_time) + '" AND TIME(pickup_datetime) < "' + str(my_time_plus_delta) + '" AND trip_centers.pickup_center = '+str(my_center_id)+ ' LIMIT 20'
-        
-        df_mysql2 = pd.read_sql(sql_query, con=connect)
-        
-        counts=df_mysql2['dropoff_center'].value_counts()
-        counts = pd.DataFrame(counts)        
-        counts['centers'] = counts.index
-        #counts['dropoff_latitude'] = centers_y[(counts['centers']-1)/len(centers_x)]
-        #counts['dropoff_longitude'] = centers_x[(counts['centers']%len(centers_x))-1]
-        
+        #print (app.network_df).head()
         
         ##################################################
         ########Bokeh block##############################
@@ -99,44 +102,51 @@ def index():
         
         
         # JSON style string taken from: https://snazzymaps.com/style/1/pale-dawn
-        map_options = GMapOptions(lat=my_latitude, lng=my_longitude, map_type="roadmap", zoom=13, styles="""
+        map_options = GMapOptions(lat=app.my_latitude, lng=app.my_longitude, map_type="roadmap", zoom=13, styles="""
         [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"lightness":33}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2e5d4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},{"featureType":"road","elementType":"all","stylers":[{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},{"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]}]
         """)
-        
+                
         plot = GMapPlot(
             x_range=x_range, y_range=y_range,
             map_options=map_options,
             title = ""
+            #plot_width=750, plot_height=750
         )
         
         source = ColumnDataSource(
             data=dict(
-                lat=[my_latitude],
-                lon=[my_longitude],
+                lat=[app.my_latitude],
+                lon=[app.my_longitude],
                 fill=['orange', 'blue', 'green']
             )
         )
         
-        circle = Circle(x="lon", y="lat", size=15, fill_color="fill", line_color="black")
-        plot.add_glyph(source, circle)
         
-        widths = [9,8,8,7,6,5,4,3,2,1]
-        ww = 0
-        for index, row in counts.iterrows():
+        circle = Circle(x="lon", y="lat", size=3, fill_color="fill", line_color="black")
+        plot.add_glyph(source, circle)
+                
+        n0 = app.network_df[0]
+        n0.sort(ascending=False,axis=1)
+        n0=n0[0:20]
+        #print n0
+        
+        
+        #widths = [9,8,8,7,6,5,4,3,2,1]
+        #ww = 0
+        for index, row in n0.iteritems():
                         
-            p = get_center_coordinates(row['centers'],x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
-            print p
-            ss = ColumnDataSource(
-            data=dict(
-                lat=[my_latitude,p[1]],
-                lon=[my_longitude,p[0]],
-            ))
-            line = Line(x="lon", y="lat", line_width=widths[ww])
-            plot.add_glyph(ss, line)
-            ww += 1
-            if ww == 10:
-                break
-            
+            p_i = get_center_coordinates(index[0],x_min=app.x_min, x_max=app.x_max, y_min=app.y_min, y_max=app.y_max,mesh_space=app.mesh_space)
+            p_f = get_center_coordinates(index[1],x_min=app.x_min, x_max=app.x_max, y_min=app.y_min, y_max=app.y_max,mesh_space=app.mesh_space)
+            #
+            #ss = ColumnDataSource(
+            #data=dict(
+            #    lat=[p_i[1],p_f[1]],
+            #    lon=[p_i[0],p_f[0]],
+            #))
+            #line = Line(x="lon", y="lat", line_width=1)
+            #plot.add_glyph(ss, line)
+            print "ddd", index, row, p_i, p_f
+        
         #hover.tooltips = [
         #    ("index", "$index"),
         #    ("(x,y)", "($x, $y)"),

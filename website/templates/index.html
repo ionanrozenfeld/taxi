@@ -4,15 +4,37 @@
 		<meta charset="utf-8">
 		<title>TaxiStrat</title>
 <link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
+
+
+	<script>
+	function validateForm() {
+	    var x = document.forms["myForm"]["address"].value;
+	    if (x == null || x == "") {
+	        alert("Address must be filled out");
+	        return false;
+	    }
+	}
+	</script>
+	
 	</head>
 	
 	<body>
 		<h1>TaxiStat: Understanding NYC activity through taxi data.</h1>
-	    <form id='menu' method='post' action='index' >
+	    <form id='menu' name='myForm' method='post' onsubmit="return validateForm()" action='index' >
 	      <p>
-	    Enter you location: <input type='text' name='address' autocomplete="off"/><br />
-	    Day of the week: <input type='text' name='dayofweek' autocomplete="off"/><br />
-		Time of the day: <input type='text' name='timeofday' autocomplete="off"/><br />
+	    Enter your location: <input type='text' name='address' autocomplete="off"/><br />
+	    Day of the week: <select name="dayofweek">
+						<option value="0">Monday</option>
+						<option value="1">Tuesday</option>
+						<option value="2">Wednesday</option>
+						<option value="3">Thursday</option>
+						<option value="4">Friday</option>
+						<option value="5">Saturday</option>
+						<option value="6">Sunday</option>
+						</select>
+		
+		500 7th Avenue 17A, New York, NY 10018
+		
 		<!--or <input type="checkbox" name="current_location" value="Y"> use current location<br />
 		
 		<input type="checkbox" name="max" value="Y"> I want to pick up a new passenger quickly<br />
@@ -23,7 +45,7 @@
 		<input type="checkbox" name="traffic" value="Y"> Display traffic in map<br />
 		</p>
 	      <p>-->
-	    <input type='submit' value='Show me!' />
+	    <input type='submit' class="button" value='Show me!' />
 	      </p>
 	    </form>
 		
