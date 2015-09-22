@@ -20,9 +20,15 @@
 	
 	<body>
 		<h1>TaxiStat: Understanding NYC activity through taxi data.</h1>
-	    <form id='menu' name='myForm' method='post' onsubmit="return validateForm()" action='index' >
+	    <form id='menu' method='post' action='index' >
 	      <p>
-	    Enter your location: <input type='text' name='address' autocomplete="off"/><br />
+	    Enter your location: <input type='text' name='address' autocomplete="off"/><br />	
+		500 7th Avenue 17A, New York, NY 10018<br /><br />		
+
+		
+		Direction:   <input type="radio" name="direction" value="from" checked> From your location
+  	  				<input type="radio" name="direction" value="to"> To your location<br /><br />
+		
 	    Day of the week: <select name="dayofweek">
 						<option value="0">Monday</option>
 						<option value="1">Tuesday</option>
@@ -32,8 +38,38 @@
 						<option value="5">Saturday</option>
 						<option value="6">Sunday</option>
 						</select>
-		
-		500 7th Avenue 17A, New York, NY 10018
+		<br /><br />
+	    Time of the day: <select name="timeofday">
+						<option value="0" checked>00:00 to 00:30</option>
+						<option value="1">00:30 to 01:00</option>
+						<option value="2">01:00 to 01:30</option>
+						<option value="3">01:30 to 02:00</option>
+						<option value="4">02:00 to 02:30</option>
+						<option value="5">02:30 to 03:00</option>
+						<option value="6">03:00 to 03:30</option>
+						<option value="7">03:30 to 04:00</option>
+						<option value="8">04:00 to 04:30</option>
+						<option value="9">04:30 to 05:00</option>
+						<option value="10">05:00 to 05:30</option>
+						<option value="11">05:30 to 06:00</option>
+						<option value="12">06:00 to 06:30</option>
+						<option value="13">06:30 to 07:00</option>
+						<option value="14">07:00 to 07:30</option>
+						<option value="15">07:30 to 08:00</option>
+						<option value="16">08:30 to 08:30</option>
+						<option value="17">08:30 to 09:00</option>
+						<option value="18">09:00 to 09:30</option>
+						<option value="19">09:30 to 10:00</option>
+						<option value="20">10:00 to 10:30</option>
+						<option value="21">10:30 to 11:00</option>
+						<option value="22">11:00 to 11:30</option>
+						<option value="23">11:30 to 12:00</option>
+					</select>
+
+						<input type="radio" name="ampm" value="am" checked>AM
+						<input type="radio" name="ampm" value="pm">PM
+						<br /><br />
+								
 		
 		<!--or <input type="checkbox" name="current_location" value="Y"> use current location<br />
 		

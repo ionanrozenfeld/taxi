@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, Markup
 from bokeh.plotting import figure, output_file, show
 from bokeh.models import Range1d
 from bokeh.embed import components
-from datetime import date, timedelta, datetime, time
+from datetime import date, timedelta, datetime
 import requests
 import simplejson as json
 import numpy as np
@@ -34,6 +34,7 @@ except mysql.connector.Error as err:
     print("Database does not exist")
   else:
     print(err)
+
     
 app = Flask(__name__)
 
@@ -55,21 +56,21 @@ def index():
         else:
             app.address = False
         app.dayofweek = request.form['dayofweek']        
+        app.direction = request.form['direction']
+        app.timeofday = int(request.form['timeofday'])
+        app.ampm = request.form['ampm']
         
-        #TURN ONif app.address == False:
-        #TURN ON    app.msg = 'You must enter your desired address.'
-        #TURN ON    return render_template('error_page.html', msg = app.msg)
+        if app.address == False:
+            app.msg = 'You must enter your desired address.'
+            return render_template('error_page.html', msg = app.msg)
+         
+        params = {'address':str(app.address)}        
+        r=(requests.get('https://maps.googleapis.com/maps/api/geocode/json',params=params)).json()
                 
-        #TURN ON params = {'address':str(app.address)}        
-        #TURN ON r=(requests.get('https://maps.googleapis.com/maps/api/geocode/json',params=params)).json()
-        
-        #r = r.json()
-        #print r['results'][0]['geometry']['location']['lat']
-        
-        
-        my_latitude = 40.681965#TURN ONr['results'][0]['geometry']['location']['lat']
-        my_longitude = -74.093396# TURN ONr['results'][0]['geometry']['location']['lng']
-                
+        app.formatted_address = r['results'][0]['formatted_address']
+        my_latitude = r['results'][0]['geometry']['location']['lat']
+        my_longitude = r['results'][0]['geometry']['location']['lng']
+
         x_min = -74.293396 #longitude  SW: 40.481965, -74.293396 NE:40.911486, -73.733866
         x_max = -73.733866 #longitude
         y_min = 40.481965 #latitude
@@ -86,7 +87,6 @@ def index():
           
         my_center_id = get_center_id(my_longitude,my_latitude,x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
         
-        
         input = open('../network_mesh_space=0.01_day='+str(app.dayofweek)+'.pickle','rb')        
         network_df = pickle.load(input)
         input.close()
@@ -94,14 +94,12 @@ def index():
         input = open('../main_data_mesh_space=0.01_day='+str(app.dayofweek)+'.pickle','rb')
         data_df = pickle.load(input)
         input.close()
-        
-        #print (app.network_df).head()
-        
+                
+                
         ##################################################
-        ########Bokeh block##############################
+        ########Bokeh MAP block##############################
         x_range = Range1d()
         y_range = Range1d()
-        
         
         # JSON style string taken from: https://snazzymaps.com/style/1/pale-dawn
         map_options = GMapOptions(lat=my_latitude, lng=my_longitude, map_type="roadmap", zoom=13, styles="""
@@ -122,6 +120,9 @@ def index():
             #plot_width=750, plot_height=750
         )
         
+        plot.plot_width = 750
+        plot.plot_height = 750
+        
         source = ColumnDataSource(
             data=dict(
                 lat=[my_latitude],
@@ -130,41 +131,45 @@ def index():
             )
         )
         
-        
-        circle = Circle(x="lon", y="lat", size=3, fill_color="fill", line_color="black")
+        circle = Circle(x="lon", y="lat", size=10, fill_color="fill", line_color="black")
         plot.add_glyph(source, circle)
-                
-        n0 = network_df[0]
-        n0.sort(ascending=False,axis=1)
-        n0=n0[0:20]
-        print n0
-        
-        #widths = [9,8,8,7,6,5,4,3,2,1]
-        #ww = 0
-        for index, row in n0.iteritems():
-                        
-            p_i = get_center_coordinates(index[0],x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
-            p_f = get_center_coordinates(index[1],x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
-            
-            ss = ColumnDataSource(
-            data=dict(
-                lat=[p_i[1],p_f[1]],
-                lon=[p_i[0],p_f[0]],
-            ))
-            line = Line(x="lon", y="lat", line_width=1)
-            plot.add_glyph(ss, line)
-            
-        
+           
         #hover.tooltips = [
-        #    ("index", "$index"),
-        #    ("(x,y)", "($x, $y)"),
-        #    ("radius", "@radius"),
-        #    ("fill color", "$color[hex, swatch]:fill_color"),
-        #    ("foo", "@foo"),
-        #    ("bar", "@bar"),
+            #("index", "$index"),
+            #("(x,y)", "($x, $y)"),
+            #("radius", "@radius"),
+            #("fill color", "$color[hex, swatch]:fill_color"),
+            #("foo", "@foo"),
+            #("bar", "@bar"),
         #]
         
+        if app.ampm == "pm":
+            app.timeofday = app.timeofday +24
         
+        if app.direction == "from":
+            n0 = network_df[app.timeofday][my_center_id]
+            n0.sort(ascending=False,axis=1)
+            n0 = n0.irow(range(10))
+        elif app.direction == "to":
+            n0 = network_df[app.timeofday][:,my_center_id]
+            n0.sort(ascending=False,axis=1)
+            n0 = n0.irow(range(10))
+        
+        #widths = [9,8,8,7,6,5,4,3,2,1]
+        ww = 0.
+        for index, row in n0.iteritems():
+            ww += 0.5
+            #p_i = get_center_coordinates(my_center_id,x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
+            p_f = get_center_coordinates(index,x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
+
+            ss = ColumnDataSource(
+            data=dict(
+                lat=[my_latitude,p_f[1]],
+                lon=[my_longitude,p_f[0]],
+            ))
+            line = Line(x="lon", y="lat", line_width=ww)
+            plot.add_glyph(ss, line)
+            
         pan = PanTool()
         wheel_zoom = WheelZoomTool()
         box_select = BoxSelectTool()
@@ -185,12 +190,62 @@ def index():
         ##################################################
         ##################################################
         
+        ##################################################
+        ########Bokeh FIG block##############################
+    
+        # select the tools we want
+        TOOLS="pan,wheel_zoom,box_zoom,reset,save"
+    
+        #print datetime.datetime(hour=int(33)/2, minute=int(33)%2*30)
+        #print data_df.index
         
-        return redirect('/graph_page') 
-            
+        p1 = figure(tools=TOOLS, plot_width=400, plot_height=400, x_axis_label='Time',y_axis_label='Number of trips')#,x_axis_type='datetime')
+        p1.line((data_df.index)/2, data_df['number_of_pickups_at_time_slot'],line_width=2, color="blue", legend="Total number of pickups in NYC in a typical day")
+        p1.line((data_df.index)/2, data_df['number_of_dropoffs_at_time_slot'],line_width=2, color="red",legend="Total number of dropoffs in NYC in a typical day")
+        #p1.circle(dates, closing_prices, fill_color="red", size=6)
+
+        plots = {'Red': p1}
+    
+        script_graph1, div_graph1 = components(plots)        
+        app.script_graph1 = script_graph1
+        app.div_graph1 = div_graph1.values()[0]
+        ##################################################
+        
+        ##################################################
+
+        ###ADD plot of NUMBER OF TRIPS (PICK UP AND DROPOFF FROM LOCATION)
+        pickup_count = [0 for i in range(48)]
+        dropoff_count = [0 for i in range(48)]
+        for ind in network_df.index.levels[0]:
+            try:
+                pickup_count[ind] = network_df[ind][my_center_id].count()
+            except KeyError:
+                pass
+            try:
+                dropoff_count[ind] = network_df[ind][:,my_center_id].count()
+            except KeyError:
+                continue
+        
+        TOOLS="pan,wheel_zoom,box_zoom,reset,save"
+                
+        p2 = figure(tools=TOOLS, plot_width=400, plot_height=400, x_axis_label='Time',y_axis_label='Number of trips')#,x_axis_type='datetime')
+        p2.line(np.array(range(48))/2, pickup_count,line_width=2, color="blue", legend="Average pickups from your location")
+        p2.line(np.array(range(48))/2, dropoff_count,line_width=2, color="red",legend="Average dropoffs at your location")
+        #p1.circle(dates, closing_prices, fill_color="red", size=6)
+        
+        plots2 = {'Red': p2}
+        
+        script_graph2, div_graph2 = components(plots2)        
+        app.script_graph2 = script_graph2
+        app.div_graph2 = div_graph2.values()[0]
+        print "here"
+        return redirect('/graph_page')
+
 @app.route('/graph_page')
 def graph_page():
-    return render_template('graph.html', address = app.address, scr = Markup(app.script), diiv = Markup(app.div))
+    return render_template('graph.html', formatted_address = app.formatted_address, scr = Markup(app.script), diiv = Markup(app.div), 
+                            scr_script_graph1 = Markup(app.script_graph1), diiv_div_graph1 = Markup(app.div_graph1),
+                            scr_script_graph2 = Markup(app.script_graph2), diiv_div_graph2 = Markup(app.div_graph2))
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0')
