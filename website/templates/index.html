@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>TaxiStrat</title>
+		<title>TaxiStat</title>
 <link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
 
 
@@ -19,11 +19,10 @@
 	</head>
 	
 	<body>
-		<h1>TaxiStat: Understanding NYC activity through taxi data.</h1>
+		<h1>Understanding NYC activity through taxi data.</h1>
 	    <form id='menu' method='post' action='index' >
 	      <p>
-	    Enter your location: <input type='text' name='address' autocomplete="off"/><br />	
-		500 7th Avenue 17A, New York, NY 10018<br /><br />		
+	    Enter your location: <input type='text' name='address' autocomplete="off"/><br /><br />		
 
 		
 		Direction:   <input type="radio" name="direction" value="from" checked> From your location
@@ -81,7 +80,8 @@
 		<input type="checkbox" name="traffic" value="Y"> Display traffic in map<br />
 		</p>
 	      <p>-->
-	    <input type='submit' class="button" value='Show me!' />
+	    <!--<input type='submit' class="button" value='Show me!' />-->
+			<input type='submit' value='Show me!' />
 	      </p>
 	    </form>
 		

@@ -149,16 +149,16 @@ def index():
         if app.direction == "from":
             n0 = network_df[app.timeofday][my_center_id]
             n0.sort(ascending=False,axis=1)
-            n0 = n0.irow(range(10))
+            n0 = n0.irow(range(20))
         elif app.direction == "to":
             n0 = network_df[app.timeofday][:,my_center_id]
             n0.sort(ascending=False,axis=1)
-            n0 = n0.irow(range(10))
+            n0 = n0.irow(range(20))
         
         #widths = [9,8,8,7,6,5,4,3,2,1]
         ww = 0.
         for index, row in n0.iteritems():
-            ww += 0.5
+            ww += 0.3
             #p_i = get_center_coordinates(my_center_id,x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
             p_f = get_center_coordinates(index,x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
 
