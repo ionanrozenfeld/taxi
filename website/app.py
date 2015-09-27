@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, Markup
-from bokeh.plotting import figure, output_file, show
+from bokeh.plotting import figure, output_file, show, gridplot
 from bokeh.models import Range1d
 from bokeh.embed import components
 from datetime import date, timedelta, datetime
@@ -120,8 +120,8 @@ def index():
             #plot_width=750, plot_height=750
         )
         
-        plot.plot_width = 750
-        plot.plot_height = 750
+        plot.plot_width = 800
+        plot.plot_height = 800
         
         source = ColumnDataSource(
             data=dict(
@@ -130,9 +130,45 @@ def index():
                 fill=['orange', 'blue', 'green']
             )
         )
-        
         circle = Circle(x="lon", y="lat", size=10, fill_color="fill", line_color="black")
         plot.add_glyph(source, circle)
+
+        source = ColumnDataSource(
+            data=dict(
+                lat=[my_latitude-0.005,my_latitude+0.005],
+                lon=[my_longitude-0.005,my_longitude-0.005],
+            )
+        )
+        line = Line(x="lon", y="lat", line_width=2, line_color="green")
+        plot.add_glyph(source, line)
+        
+
+        source = ColumnDataSource(
+            data=dict(
+                lat=[my_latitude+0.005,my_latitude+0.005],
+                lon=[my_longitude-0.005,my_longitude+0.005],
+            )
+        )
+        line = Line(x="lon", y="lat", line_width=2, line_color="green")
+        plot.add_glyph(source, line)
+
+        source = ColumnDataSource(
+            data=dict(
+                lat=[my_latitude-0.005,my_latitude+0.005],
+                lon=[my_longitude+0.005,my_longitude+0.005],
+            )
+        )
+        line = Line(x="lon", y="lat", line_width=2, line_color="green")
+        plot.add_glyph(source, line)
+
+        source = ColumnDataSource(
+            data=dict(
+                lat=[my_latitude-0.005,my_latitude-0.005],
+                lon=[my_longitude-0.005,my_longitude+0.005],
+            )
+        )
+        line = Line(x="lon", y="lat", line_width=2, line_color="green")
+        plot.add_glyph(source, line)
            
         #hover.tooltips = [
             #("index", "$index"),
@@ -189,6 +225,7 @@ def index():
 
         ##################################################
         ##################################################
+            
         
         ##################################################
         ########Bokeh FIG block##############################
@@ -204,11 +241,11 @@ def index():
         p1.line((data_df.index)/2, data_df['number_of_dropoffs_at_time_slot'],line_width=2, color="red",legend="Total number of dropoffs in NYC in a typical day")
         #p1.circle(dates, closing_prices, fill_color="red", size=6)
 
-        plots = {'Red': p1}
+        #plots = {'Red': p1}
     
-        script_graph1, div_graph1 = components(plots)        
-        app.script_graph1 = script_graph1
-        app.div_graph1 = div_graph1.values()[0]
+        #script_graph1, div_graph1 = components(plots)        
+        #app.script_graph1 = script_graph1
+        #app.div_graph1 = div_graph1.values()[0]
         ##################################################
         
         ##################################################
@@ -233,18 +270,21 @@ def index():
         p2.line(np.array(range(48))/2, dropoff_count,line_width=2, color="red",legend="Average dropoffs at your location")
         #p1.circle(dates, closing_prices, fill_color="red", size=6)
         
-        plots2 = {'Red': p2}
         
-        script_graph2, div_graph2 = components(plots2)        
+        #plots2 = {'Red': p2}
+        
+        plots1and2 = gridplot([[p1, p2]])
+        
+        script_graph2, div_graph2 = components(plots1and2)        
         app.script_graph2 = script_graph2
-        app.div_graph2 = div_graph2.values()[0]
-        print "here"
+        app.div_graph2 = div_graph2
+        
         return redirect('/graph_page')
 
 @app.route('/graph_page')
 def graph_page():
     return render_template('graph.html', formatted_address = app.formatted_address, scr = Markup(app.script), diiv = Markup(app.div), 
-                            scr_script_graph1 = Markup(app.script_graph1), diiv_div_graph1 = Markup(app.div_graph1),
+                            #scr_script_graph1 = Markup(app.script_graph1), diiv_div_graph1 = Markup(app.div_graph1),
                             scr_script_graph2 = Markup(app.script_graph2), diiv_div_graph2 = Markup(app.div_graph2))
 
 if __name__ == '__main__':

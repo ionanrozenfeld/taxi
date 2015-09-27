@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A layout example that shows off a responsive product landing page.">
+
+    <title>Landing Page &ndash; Layout Examples &ndash; Pure</title>
+
+    
+
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
+
+
+<!--[if lte IE 8]>
+  
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
+  
+<![endif]-->
+<!--[if gt IE 8]><!-->
+  
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+  
+<!--<![endif]-->
+
+
+
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+
+
+  
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="css/layouts/marketing-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="css/layouts/marketing.css">
+    <!--<![endif]-->
+  
+
+
+    
+
+    
+
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+<div class="header">
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        <a class="pure-menu-heading" href="">Your Site</a>
+
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-selected"><a href="#" class="pure-menu-link">Home</a></li>
+            <li class="pure-menu-item"><a href="#" class="pure-menu-link">Tour</a></li>
+            <li class="pure-menu-item"><a href="#" class="pure-menu-link">Sign Up</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="splash-container">
+    <div class="splash">
+        <h1 class="splash-head">TaxiStat</h1>
+        <p class="splash-subhead">
+            Understanding NYC activity through taxi data.
+        </p>
+        <p>
+            <a href="http://purecss.io" class="pure-button pure-button-primary">Get Started</a>
+        </p>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="content">
+        <!--<h2 class="content-head is-center">Excepteur sint occaecat cupidatat.</h2>-->
+
+        <div class="pure-g">
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+
+                <h3 class="content-subhead">
+                    <i class="fa fa-rocket"></i>
+                    Looking for economic activity information within NYC?
+                </h3>
+                <p>
+                    Using NYC taxi data TaxiStat provides information on centers of attraction on desired location at different time.
+                </p>
+            </div>
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <h3 class="content-subhead">
+                    <i class="fa fa-mobile"></i>
+                    Wonder where to open a new store?
+                </h3>
+                <p>
+                    Based on your target audience, TaxiStat will help entrepeneurs/startups/investors decide where to open a new store.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ribbon l-box-lrg pure-g">
+        <div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5">
+            <img class="pure-img-responsive" alt="File Icons" width="300" src="img/map.png">
+        </div>
+        <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-5">
+
+            <h2 class="content-head content-head-ribbon">Statistics at work.</h2>
+
+            <p>
+                TaxiStat will give you an overall understanding of the economic activity at a given location and given time within
+				New York City. Taxi data provides a straighforward way to learn about centers of attraction at different times of a day.
+				Analyzing a database of about 170,000,000 taxi trips we provide this information and make it available to potential
+				investors and entrepeneurs.
+            </p>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2 class="content-head is-center">Use TaxiStat by entering the information below.</h2>
+
+        <div class="pure-g">
+            <div class="l-box-lrg pure-u-1 pure-u-md-2-5">
+                <form id='menu' class="pure-form pure-form-stacked" method='post' action='index'>
+                    <fieldset>
+
+                        <label for="address">Enter your location</label>
+                        <input id="address" type="text" name='address' autocomplete="off" placeholder="Ex: 500 7th Avenue 17A, New York, NY 10018">
+
+						<label for="address">Direction</label> 
+  	  					<input type="radio" name="direction" value="to"> To your location
+						<input type="radio" name="direction" value="from" checked> From your location
+		
+	    				<label for="address">Direction</label>  
+						<select name="dayofweek">
+						<option value="0">Monday</option>
+						<option value="1">Tuesday</option>
+						<option value="2">Wednesday</option>
+						<option value="3">Thursday</option>
+						<option value="4">Friday</option>
+						<option value="5">Saturday</option>
+						<option value="6">Sunday</option>
+						</select>
+		<br /><br />
+	    Time of the day: <select name="timeofday">
+						<option value="0" checked>00:00 to 00:30</option>
+						<option value="1">00:30 to 01:00</option>
+						<option value="2">01:00 to 01:30</option>
+						<option value="3">01:30 to 02:00</option>
+						<option value="4">02:00 to 02:30</option>
+						<option value="5">02:30 to 03:00</option>
+						<option value="6">03:00 to 03:30</option>
+						<option value="7">03:30 to 04:00</option>
+						<option value="8">04:00 to 04:30</option>
+						<option value="9">04:30 to 05:00</option>
+						<option value="10">05:00 to 05:30</option>
+						<option value="11">05:30 to 06:00</option>
+						<option value="12">06:00 to 06:30</option>
+						<option value="13">06:30 to 07:00</option>
+						<option value="14">07:00 to 07:30</option>
+						<option value="15">07:30 to 08:00</option>
+						<option value="16">08:30 to 08:30</option>
+						<option value="17">08:30 to 09:00</option>
+						<option value="18">09:00 to 09:30</option>
+						<option value="19">09:30 to 10:00</option>
+						<option value="20">10:00 to 10:30</option>
+						<option value="21">10:30 to 11:00</option>
+						<option value="22">11:00 to 11:30</option>
+						<option value="23">11:30 to 12:00</option>
+					</select>
+
+						<input type="radio" name="ampm" value="am" checked>AM
+						<input type="radio" name="ampm" value="pm">PM
+						<br /><br />
+
+                        <button type="submit" class="pure-button">Show me!</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!--<div class="l-box-lrg pure-u-1 pure-u-md-3-5">
+                <h4>Contact Us</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+
+                <h4>More Information</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </div>-->
+        </div>
+
+    </div>
+
+    <div class="footer l-box is-center">
+        Layout made by the YUI Team.
+    </div>
+
+</div>
+
+
+
+
+
+
+</body>
+</html>
