@@ -1,95 +1,245 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>TaxiStat</title>
-<link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
+<head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A layout example that shows off a responsive product landing page.">
+
+    <title>Landing Page &ndash; Layout Examples &ndash; Pure</title>
 
 
-	<script>
-	function validateForm() {
-	    var x = document.forms["myForm"]["address"].value;
-	    if (x == null || x == "") {
-	        alert("Address must be filled out");
-	        return false;
-	    }
-	}
-	</script>
-	
-	</head>
-	
-	<body>
-		<h1>Understanding NYC activity through taxi data.</h1>
-	    <form id='menu' method='post' action='index' >
-	      <p>
-	    <!--Enter your location: <input type='text' name='address' autocomplete="off"/><br /><br />		
-		35 w 35th st, new york, ny<br /><br />	
-		
-		Direction:   <input type="radio" name="direction" value="from" checked> From your location
-  	  				<input type="radio" name="direction" value="to"> To your location<br /><br />-->
-		
-	    Day of the week: <select name="dayofweek">
-						<option value="0">Monday</option>
-						<option value="1">Tuesday</option>
-						<option value="2">Wednesday</option>
-						<option value="3">Thursday</option>
-						<option value="4">Friday</option>
-						<option value="5">Saturday</option>
-						<option value="6">Sunday</option>
-						</select>
-		<br /><br />
-	    Month: <select name="month">
-						<option value="1">January</option>
-						<option value="2">February</option>
-						<option value="3">March</option>
-						<option value="4">April</option>
-						<option value="5">May</option>
-						<option value="6">June</option>
-						<option value="7">July</option>
-						<option value="8">August</option>
-						<option value="9">September</option>
-						<option value="10">October</option>
-						<option value="11">November</option>
-						<option value="12">December</option>
+    
+
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
+
+
+<!--[if lte IE 8]>
+  
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
+  
+<![endif]-->
+<!--[if gt IE 8]><!-->
+  
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+  
+<!--<![endif]-->
+
+
+
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+
+
+  
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="css/layouts/marketing-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <!--<link rel="stylesheet" href="css/layouts/marketing.css">-->
+    <!--<![endif]-->
+  
+
+<link rel=stylesheet type=text/css href='{{ url_for('static',filename='marketing.css')}}'>
+
+    
+
+    
+
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+<div class="header">
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        <!--<a class="pure-menu-heading" href="">Your Site</a>
+
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-selected"><a href="#" class="pure-menu-link">Home</a></li>
+            <li class="pure-menu-item"><a href="#" class="pure-menu-link">Tour</a></li>
+            <li class="pure-menu-item"><a href="#" class="pure-menu-link">Sign Up</a></li>
+        </ul>-->
+    </div>
+</div>
+
+<div class="splash-container">
+    <div class="splash">
+        <h1 class="splash-head">ActivityFinder NYC</h1>
+        <p class="splash-subhead">
+             the right place at the right time
+        </p>
+        <!--<p>
+            <a href="http://purecss.io" class="pure-button pure-button-primary">Get Started</a>
+        </p>-->
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="content">
+        <!--<h2 class="content-head is-center">Excepteur sint occaecat cupidatat.</h2>-->
+
+        <div class="pure-g">
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+
+                <h3 class="content-subhead">
+                    <i class="fa fa-rocket"></i>
+                    Looking for economic activity information within NYC?
+                </h3>
+                <p>
+                    Using NYC taxi data TaxiStat provides information on centers of attraction on desired location at different time.
+                </p>
+            </div>
+            <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <h3 class="content-subhead">
+                    <i class="fa fa-mobile"></i>
+                    Wonder where to open a new store?
+                </h3>
+                <p>
+                    Based on your target audience, TaxiStat will help entrepeneurs/startups/investors decide where to open a new store.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="ribbon l-box-lrg pure-g">
+        <div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5">
+            <img class="pure-img-responsive" alt="File Icons" width="300" src="static/img/map.png">
+        </div>
+        <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-5">
+
+            <h2 class="content-head content-head-ribbon">Statistics at work.</h2>
+
+            <p>
+                TaxiStat will give you an overall understanding of the mobility at a given location and given time within
+				New York City. Taxi data provides a straighforward way to learn about centers of attraction at different times of a day.
+				Analyzing a database of about 170,000,000 taxi trips we provide this information and make it available to potential
+				investors and entrepeneurs.
+            </p>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2 class="content-head is-center">Use TaxiStat by entering the information below.</h2>
+
+        <div class="pure-g">
+            <div class="l-box-lrg pure-u-1 pure-u-md-2-5">
+                <form id='menu' class="pure-form" method='post' action='index'>
+                    <fieldset>
+
+                        <label for="address">Enter your location
+					    	<input id="address" name='address' class="pure-input-3-4" type="text" autocomplete="off"  placeholder="Ex: 500 7th Avenue 17A, New York, NY 10018">
+						</label>
 						
-						</select>
-		<br /><br />
-		
-	    Time of the day: <select name="timeofday">
-						<option value="0" checked>00:00 to 01:00</option>
-						<option value="1">01:00 to 02:00</option>
-						<option value="2">02:00 to 03:00</option>
-						<option value="3">03:00 to 04:00</option>
-						<option value="4">04:00 to 05:00</option>
-						<option value="5">05:00 to 06:00</option>
-						<option value="6">06:00 to 07:00</option>
-						<option value="7">07:00 to 08:00</option>
-						<option value="8">08:00 to 09:00</option>
-						<option value="9">09:00 to 10:00</option>
-						<option value="10">10:00 to 11:00</option>
-						<option value="11">11:00 to 12:00</option>
-					</select>
+						<label for="from">
+						From<input id="from" type="radio" name="direction" value="from">
+						</label> 
+						
+						<label for="to">
+  	  					To<input id="to" type="radio" name="direction" value="to">
+						</label> 
+						
+						
+	    				<label for="month">Month
+							<select name="month">
+							<option value="1">January</option>
+							<option value="2">February</option>
+							<option value="3">March</option>
+							<option value="4">April</option>
+							<option value="5">May</option>
+							<option value="6">June</option>
+							<option value="7">July</option>
+							<option value="8">August</option>
+							<option value="9">September</option>
+							<option value="10">October</option>
+							<option value="11">November</option>
+							<option value="12">December</option>
+							</select>
+							
+						</label> 
+						
+	    				<label for="dayofweek"> Day of the week
+							<select name="dayofweek">
+							<option value="0">Monday</option>
+							<option value="1">Tuesday</option>
+							<option value="2">Wednesday</option>
+							<option value="3">Thursday</option>
+							<option value="4">Friday</option>
+							<option value="5">Saturday</option>
+							<option value="6">Sunday</option>
+							</select>
+							
+						</label> 
+						
+						
+						<label for="timeofday">Time of the day
+	    					<select name="timeofday">
+							<option value="0" checked>00:00 to 01:00</option>
+							<option value="1">01:00 to 02:00</option>
+							<option value="2">02:00 to 03:00</option>
+							<option value="3">03:00 to 04:00</option>
+							<option value="4">04:00 to 05:00</option>
+							<option value="5">05:00 to 06:00</option>
+							<option value="6">06:00 to 07:00</option>
+							<option value="7">07:00 to 08:00</option>
+							<option value="8">08:00 to 09:00</option>
+							<option value="9">09:00 to 10:00</option>
+							<option value="10">10:00 to 11:00</option>
+							<option value="11">11:00 to 12:00</option>
+							</select>
+							
+						</label>
+						
+						<label for="am" class="pure-radio">AM
+							<input id="am" type="radio" name="ampm" value="am" checked>
+						</label> 
+						
+						<label for="pm" class="pure-radio">PM
+  	  						<input id="pm" type="radio" name="ampm" value="pm">
+						</label> 
+						
 
-						<input type="radio" name="ampm" value="am" checked>AM
-						<input type="radio" name="ampm" value="pm">PM
-						<br /><br />
-								
-		
-		<!--or <input type="checkbox" name="current_location" value="Y"> use current location<br />
-		
-		<input type="checkbox" name="max" value="Y"> I want to pick up a new passenger quickly<br />
-		Options:
-		<input type="checkbox" name="max" value="Y"> I want to pick up a new passenger quickly<br />
-		<input type="checkbox" name="fare" value="Y"> I want to maximize the fare amount<br />
-		<input type="checkbox" name="length" value="Y"> I prefer shorter trips<br />
-		<input type="checkbox" name="traffic" value="Y"> Display traffic in map<br />
-		</p>
-	      <p>-->
-	    <!--<input type='submit' class="button" value='Show me!' />-->
-			<input type='submit' value='Show me!' />
-	      </p>
-	    </form>
-		
-		
-	</body>
+                        <button type="submit" class="pure-button">Show me!</button>
+                    </fieldset>
+                </form>
+            </div>
+
+            <!--<div class="l-box-lrg pure-u-1 pure-u-md-3-5">
+                <h4>Contact Us</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat.
+                </p>
+
+                <h4>More Information</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </div>-->
+        </div>
+
+    </div>
+
+    <div class="footer l-box is-center">
+        Layout made by the YUI Team.
+    </div>
+
+</div>
+
+
+
+
+
+
+</body>
 </html>

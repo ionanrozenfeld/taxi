@@ -53,34 +53,72 @@ def index():
         
         return render_template('index.html')
     else:
-        #if request.form.get("address"):
-        #    app.address = request.form['address']
-        #else:
-        #    app.address = False
+        if request.form.get("address"):
+            app.address = request.form['address']
+        else:
+            app.address = False
+        
         app.dayofweek = request.form['dayofweek']        
-        app.month = request.form['month']        
-        #app.direction = request.form['direction']
+        app.month = int(request.form['month'])        
+        app.direction = request.form['direction']
         app.timeofday = int(request.form['timeofday'])
         app.ampm = request.form['ampm']
         
-        #if app.address == False:
-        #    app.msg = 'You must enter your desired address.'
-        #    return render_template('error_page.html', msg = app.msg)
+        if app.ampm == "pm":
+            app.timeofday+=12
+            
+        #print "address", app.address
+        #print "dayofweek" , app.dayofweek
+        #print "month", app.month
+        #print "direction", app.direction
+        #print "timeofday", app.timeofday
+        #print "ampm", app.ampm
+        
+        if app.address != False:
          
-        #params = {'address':str(app.address)}        
-        #r=(requests.get('https://maps.googleapis.com/maps/api/geocode/json',params=params)).json()
-                
-        #app.formatted_address = r['results'][0]['formatted_address']
-        #my_latitude = r['results'][0]['geometry']['location']['lat']
-        #my_longitude = r['results'][0]['geometry']['location']['lng']
-                
+            params = {'address':str(app.address)}        
+            r=(requests.get('https://maps.googleapis.com/maps/api/geocode/json',params=params)).json()
+                   
+            app.formatted_address = r['results'][0]['formatted_address']
+            my_latitude = r['results'][0]['geometry']['location']['lat']
+            my_longitude = r['results'][0]['geometry']['location']['lng']
+            
+            x_min = -74.293396 #longitude  SW: 40.481965, -74.293396 NE:40.911486, -73.733866
+            x_max = -73.733866 #longitude
+            y_min = 40.481965 #latitude
+            y_max = 40.911486 #latitude
+            mesh_space = 0.0025
+        
+            if my_latitude < y_min or my_latitude >= y_max or my_longitude < x_min or my_longitude>= x_max or app.address == "" or app.address == False:
+                app.msg = 'The address you entered is outside the boundaries of NYC.'
+                return render_template('error_page.html', msg = app.msg)
+        
+        
+            centers_x,centers_rx=np.linspace(x_min,x_max,(x_max-x_min)/mesh_space,retstep="True")
+            centers_y,centers_ry=np.linspace(y_min,y_max,(y_max-y_min)/mesh_space,retstep="True")
+          
+            my_center_id = get_center_id(my_longitude,my_latitude,x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
+        
         # Make the dataframe
-        f=open('../network_mesh_space=0.005_month='+str(app.month)+'_day='+str(app.dayofweek)+'.pickle','rb')
+        f=open('../network_mesh_space=0.0025_month='+str(app.month)+'_day='+str(app.dayofweek)+'.pickle','rb')
         network = pickle.load(f)
         f.close()
+        
+        if app.address != False: 
+            if app.direction == "from":
+                n0 = network.loc(axis=0)[app.timeofday,:,my_center_id,:]
+                n0.reset_index(level=[0,1,2,3], inplace=True)
+                gr = n0[['dropoff_center',0]].groupby('dropoff_center').sum()
+                gr.sort(0,ascending=False,inplace=True)
+                gr=gr.iloc[0:10]
+            elif app.direction == "to":
+                n0 = network.loc(axis=0)[:,app.timeofday,:,my_center_id]
+                n0.reset_index(level=[0,1,2,3], inplace=True)
+                gr = n0[['pickup_center',0]].groupby('pickup_center').sum()
+                gr.sort(0,ascending=False,inplace=True)
+                gr=gr.iloc[0:10]
                 
         trips = {} #{center_id: [outgoing trips, incoming trips]}
-
         count_pick_ups = network.loc[(app.timeofday,slice(None),slice(None),slice(None)),:]
         count_pick_ups_index = count_pick_ups.index.values
         for i in count_pick_ups_index:
@@ -88,7 +126,6 @@ def index():
                 trips[str(int(i[2]))][0] += int(count_pick_ups.ix[i])
             except KeyError:
                 trips[str(int(i[2]))] = [int(count_pick_ups.ix[i]),0]
-
         count_drop_offs = network.loc[(slice(None),app.timeofday,slice(None),slice(None)),:]
         count_drop_offs_index = count_drop_offs.index.values
         for i in count_drop_offs_index:
@@ -96,23 +133,21 @@ def index():
                 trips[str(int(i[3]))][1] += int(count_drop_offs.ix[i])
             except KeyError:
                 trips[str(int(i[3]))] = [0,int(count_drop_offs.ix[i])]
-        
-        
+                
         tk = trips.keys()
         tv = trips.values()
 
         map_data = pd.DataFrame({'centers': tk, 'activity' : [i[0]+i[1] for i in tv], 
                                  'attractiveness': [i[1]-i[0] for i in tv]})
         
-        
         # Make the grid
         
-        f=open('../centers_long_lat_id_mesh_space=0.005.pickle','rb')
+        f=open('../centers_long_lat_id_mesh_space=0.0025.pickle','rb')
         grid = pickle.load(f)
         f.close()
         grid_json = {"type":"FeatureCollection", "features":[]}
         
-        add_mesh = 0.005/2
+        add_mesh = 0.0025/2
         for index, row in grid.iterrows():
             if str(int(row[2])) in trips.keys():
                 popup_content= "Incoming: "+str(trips[str(int(row[2]))][0])+"<br /> outgoing: "+str(trips[str(int(row[2]))][1]) +"<br /> Activity: "+str(trips[str(int(row[2]))][1] + trips[str(int(row[2]))][0]) +"<br /> Attractiveness: "+str(trips[str(int(row[2]))][1] - trips[str(int(row[2]))][0])
@@ -126,34 +161,126 @@ def index():
         
         with open('static/grid.json', 'w') as outfile:
             json.dump(grid_json, outfile)
-        
         # Make the map
         
-        map_1 = folium.Map(location=[40.74006, -73.98605], zoom_start=12,
-                           tiles='Stamen Terrain')
+        map_1 = folium.Map(location=[40.74006, -73.98605], zoom_start=12, tiles='Stamen Terrain')
         map_1.lat_lng_popover()
+        
+        ##############################################################################
+        ################ADD MAIN IN AND OUT NETWORK HUBS##############################
+        net = network.loc(axis=0)[app.timeofday,:,:,:]
+        net = net[['pickup_center','dropoff_center',0]]
+        net = np.array(net)
+        net = net.astype(int)
+        g=nx.MultiDiGraph()
+        g.add_weighted_edges_from(net,weight='weight')
+        outdegrees = g.out_degree(weight='weight')
+        outdegrees = np.array([[i, outdegrees[i]] for i in outdegrees])
+        outdegrees.sort(axis=0)
+        outdegrees = outdegrees[-5:]
+
+        net = network.loc(axis=0)[:,app.timeofday,:,:]
+        net = net[['pickup_center','dropoff_center',0]]
+        net = np.array(net)
+        net = net.astype(int)
+        g=nx.MultiDiGraph()
+        g.add_weighted_edges_from(net,weight='weight')
+        indegrees = g.in_degree(weight='weight')
+        indegrees = np.array([[i, indegrees[i]] for i in indegrees])
+        indegrees.sort(axis=0)
+        indegrees = indegrees[-5:]
+        
+        for i in outdegrees:
+            location = get_center_coordinates(i[0],x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
+            map_1.simple_marker(location=location, popup="Number of trips from hub: "+str(i[1]),marker_color='orange')
+        
+        for i in indegrees:
+            location = get_center_coordinates(i[0],x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
+            map_1.simple_marker(location=location, popup="Number of trips to hub: "+str(i[1]),marker_color='green')
+        
+        ##########################################################################################
+        ##########################################################################################
+        
+        ##########################################################################################
+        ###############ADD MARKER AT CHOSEN ADDRESS###############################################
+        
+        if app.address != False: #add a marker at my address
+            map_1.simple_marker(location=(my_latitude,my_longitude),popup=str(app.formatted_address),marker_color='red')
+            #map_1.polygon_marker(location=(my_latitude,my_longitude),line_opacity=0.5,
+            #                    line_weight=1,fill_color='black',fill_opacity=0.6,num_sides=5,
+            #                    popup=str(app.formatted_address))        
+
+        ##########################################################################################
+        ##########################################################################################
+        
+        ##########################################################################################
+        #############ADD LINES TO MAP#############################################################
+        
+        if app.address != False:
+            for index, row in gr.iterrows():
+                p_f = get_center_coordinates(index,x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
+                map_1.line(locations=[(my_latitude, my_longitude), (p_f[1], p_f[0])],line_weight=2,line_opacity=1,line_color='black',popup=str(int(row))+" trips")            
+        
+        ##########################################################################################
+        ##########################################################################################
+
+        ##########################################################################################
+        #############Add grid to map##############################################################
         
         map_1.geo_json(geo_path='static/grid.json', data=map_data,
                        columns=['centers', 'activity'],
                        data_out='static/data.json',
-                       threshold_scale=[0, 250, 500, 750, 1000, 2000],
+                       threshold_scale=[10, 100, 200, 300, 500, 600],
                        key_on='feature.id',fill_color='BuPu', fill_opacity=0.5, line_weight=1,
-                       line_opacity=0.8,line_color='black',
+                       line_opacity=0.2,line_color='black',
                        legend_name='Activity Rate',reset=True)
-                       
+
+        ##########################################################################################
+        ##########################################################################################
+        
+        ##########################################################################################
+        ##############Create map and prepare Flask variables######################################
+        
+        map_1.map_size = {'width': 800, 'height': 800}
         map_1.create_map(path='nyc.html')        
         soup = bs(open('nyc.html'), 'html.parser') 
         app.map_head = soup.head
-        app.map_div = str(soup.body.div).replace("100%","600px")        
+        app.map_div = str(soup.body.div) #.replace("100%","800px")        
         app.map_script= soup.body.script
-                       
+        ##########################################################################################
+        ##########################################################################################
         
-                       
+        ##########################################################################################
+        ###ADD plot of NUMBER OF TRIPS (PICK UP AND DROPOFF FROM LOCATION)########################
+        ###BOKEH BLOCK############################################################################
+        app.script_graph2 = None
+        app.div_graph2 = None
+        if app.address != False: #This get plotted only if the user entered a location
+            pickup_count = [0 for i in range(24)]
+            dropoff_count = [0 for i in range(24)]
+            idx = pd.IndexSlice
+            for ind in network.index.levels[0]:
+                pickup_count[ind] = int(network.loc(axis=0)[ind,:,26241,:].sum())
+                dropoff_count[ind] = int(network.loc(axis=0)[:,ind,:,26241].sum()[0])            
+            TOOLS="pan,wheel_zoom,box_zoom,reset,save"
+            
+            p2 = figure(tools=TOOLS, plot_width=400, plot_height=400, x_axis_label='Time',y_axis_label='Number of trips')#,x_axis_type='datetime')
+            p2.line(np.array(range(24)), pickup_count,line_width=2, color="blue", legend="Average pickups from your location")
+            p2.line(np.array(range(24)), dropoff_count,line_width=2, color="red",legend="Average dropoffs at your location")
+            
+            script_graph2, div_graph2 = components(p2)        
+            app.script_graph2 = script_graph2
+            app.div_graph2 = div_graph2
+        
+        ###END BOKEH BLOCK########################################################################
+        ##########################################################################################
+             
         return redirect('/graph_page')
 
 @app.route('/graph_page')
 def graph_page():
-    return render_template('graph.html', maphead = Markup(app.map_head), mapdiv=Markup(app.map_div) ,mapscript=Markup(app.map_script))
+    return render_template('graph.html', maphead = Markup(app.map_head), mapdiv=Markup(app.map_div) ,mapscript=Markup(app.map_script),
+                            script_graph2=Markup(app.script_graph2) ,div_graph2=Markup(app.div_graph2))
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
