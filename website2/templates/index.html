@@ -5,47 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A layout example that shows off a responsive product landing page.">
 
-    <title>Landing Page &ndash; Layout Examples &ndash; Pure</title>
-
-
-    
+    <title>ActivityFinder NYC</title>
 
 
 <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
 
-
-
-<!--[if lte IE 8]>
-  
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
-  
-<![endif]-->
-<!--[if gt IE 8]><!-->
   
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
   
-<!--<![endif]-->
-
-
-
-<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-
-
-
-  
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="css/layouts/marketing-old-ie.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-        <!--<link rel="stylesheet" href="css/layouts/marketing.css">-->
-    <!--<![endif]-->
-  
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">  
 
 <link rel=stylesheet type=text/css href='{{ url_for('static',filename='marketing.css')}}'>
-
-    
-
-    
 
 </head>
 <body>
@@ -94,7 +64,7 @@
                     Looking for economic activity information within NYC?
                 </h3>
                 <p>
-                    Using NYC taxi data TaxiStat provides information on centers of attraction on desired location at different time.
+                    Using NYC taxi data ActivityFinder provides information on centers of attraction on desired location at different time.
                 </p>
             </div>
             <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
@@ -103,7 +73,7 @@
                     Wonder where to open a new store?
                 </h3>
                 <p>
-                    Based on your target audience, TaxiStat will help entrepeneurs/startups/investors decide where to open a new store.
+                    Based on your target audience, ActivityFinder will help entrepeneurs/startups/investors decide where to open a new store.
                 </p>
             </div>
         </div>
@@ -118,7 +88,7 @@
             <h2 class="content-head content-head-ribbon">Statistics at work.</h2>
 
             <p>
-                TaxiStat will give you an overall understanding of the mobility at a given location and given time within
+                ActivityFinder will give you an overall understanding of the mobility at a given location and given time within
 				New York City. Taxi data provides a straighforward way to learn about centers of attraction at different times of a day.
 				Analyzing a database of about 170,000,000 taxi trips we provide this information and make it available to potential
 				investors and entrepeneurs.
@@ -127,24 +97,24 @@
     </div>
 
     <div class="content">
-        <h2 class="content-head is-center">Use TaxiStat by entering the information below.</h2>
+        <h2 class="content-head is-center">Use ActivityFinder by entering the information below.</h2>
 
         <div class="pure-g">
-            <div class="l-box-lrg pure-u-1 pure-u-md-2-5">
+            <div class="l-box-lrg pure-u-1 pure-u-lg-2-5">
                 <form id='menu' class="pure-form" method='post' action='index'>
                     <fieldset>
 
                         <label for="address">Enter your location
 					    	<input id="address" name='address' class="pure-input-3-4" type="text" autocomplete="off"  placeholder="Ex: 500 7th Avenue 17A, New York, NY 10018">
-						</label>
+						</label><br />
 						
 						<label for="from">
-						From<input id="from" type="radio" name="direction" value="from">
+						From <input id="from" type="radio" name="direction" value="from" checked>
 						</label> 
 						
 						<label for="to">
-  	  					To<input id="to" type="radio" name="direction" value="to">
-						</label> 
+  	  					To <input id="to" type="radio" name="direction" value="to">
+						</label> <br />
 						
 						
 	    				<label for="month">Month
@@ -162,8 +132,7 @@
 							<option value="11">November</option>
 							<option value="12">December</option>
 							</select>
-							
-						</label> 
+						</label> <br />
 						
 	    				<label for="dayofweek"> Day of the week
 							<select name="dayofweek">
@@ -175,8 +144,7 @@
 							<option value="5">Saturday</option>
 							<option value="6">Sunday</option>
 							</select>
-							
-						</label> 
+						</label> <br />
 						
 						
 						<label for="timeofday">Time of the day
@@ -194,16 +162,15 @@
 							<option value="10">10:00 to 11:00</option>
 							<option value="11">11:00 to 12:00</option>
 							</select>
-							
-						</label>
+						</label><br />
 						
-						<label for="am" class="pure-radio">AM
-							<input id="am" type="radio" name="ampm" value="am" checked>
-						</label> 
+						<label for="am" type="radio">
+							AM <input id="am" type="radio" name="ampm" value="am" checked>
+  	  					</label> 
 						
-						<label for="pm" class="pure-radio">PM
-  	  						<input id="pm" type="radio" name="ampm" value="pm">
-						</label> 
+						<label for="pm" type="radio">
+							PM <input id="pm" type="radio" name="ampm" value="pm">
+						</label> <br />
 						
 
                         <button type="submit" class="pure-button">Show me!</button>
@@ -231,7 +198,7 @@
     </div>
 
     <div class="footer l-box is-center">
-        Layout made by the YUI Team.
+        <!--Layout made by the YUI Team.-->
     </div>
 
 </div>

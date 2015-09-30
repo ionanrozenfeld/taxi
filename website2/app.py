@@ -10,6 +10,7 @@ import pandas as pd
 from identify_points import get_center_id, get_center_coordinates
 import mysql.connector
 import pickle
+import networkx as nx
 
 from bokeh.browserlib import view
 from bokeh.document import Document
@@ -98,35 +99,31 @@ def index():
             centers_y,centers_ry=np.linspace(y_min,y_max,(y_max-y_min)/mesh_space,retstep="True")
           
             my_center_id = get_center_id(my_longitude,my_latitude,x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
-        
+            
         # Make the dataframe
         f=open('../network_mesh_space=0.0025_month='+str(app.month)+'_day='+str(app.dayofweek)+'.pickle','rb')
         network = pickle.load(f)
         f.close()
-        
+               
         if app.address != False: 
             if app.direction == "from":
-                n0 = network.loc(axis=0)[app.timeofday,:,my_center_id,:]
-                n0.reset_index(level=[0,1,2,3], inplace=True)
-                gr = n0[['dropoff_center',0]].groupby('dropoff_center').sum()
-                gr.sort(0,ascending=False,inplace=True)
-                gr=gr.iloc[0:10]
+                n0 = network.loc(axis=0)[:,:,my_center_id,:].reset_index()
+                gr = n0[['dropoff_center',0]].groupby('dropoff_center', as_index=True).sum()
+                gr = gr.sort(columns=0,ascending=False).iloc[0:10]
             elif app.direction == "to":
-                n0 = network.loc(axis=0)[:,app.timeofday,:,my_center_id]
-                n0.reset_index(level=[0,1,2,3], inplace=True)
-                gr = n0[['pickup_center',0]].groupby('pickup_center').sum()
-                gr.sort(0,ascending=False,inplace=True)
-                gr=gr.iloc[0:10]
-                
+                n0 = network.loc(axis=0)[:,:,:,my_center_id].reset_index()
+                gr = n0[['pickup_center',0]].groupby('pickup_center', as_index=True).sum()
+                gr = gr.sort(columns=0,ascending=False).iloc[0:10]        
+        
         trips = {} #{center_id: [outgoing trips, incoming trips]}
-        count_pick_ups = network.loc[(app.timeofday,slice(None),slice(None),slice(None)),:]
+        count_pick_ups = network.loc(axis=0)[app.timeofday,:,:,:]
         count_pick_ups_index = count_pick_ups.index.values
         for i in count_pick_ups_index:
             try:
                 trips[str(int(i[2]))][0] += int(count_pick_ups.ix[i])
             except KeyError:
                 trips[str(int(i[2]))] = [int(count_pick_ups.ix[i]),0]
-        count_drop_offs = network.loc[(slice(None),app.timeofday,slice(None),slice(None)),:]
+        count_drop_offs = network.loc(axis=0)[:,app.timeofday,:,:]
         count_drop_offs_index = count_drop_offs.index.values
         for i in count_drop_offs_index:
             try:
@@ -139,7 +136,6 @@ def index():
 
         map_data = pd.DataFrame({'centers': tk, 'activity' : [i[0]+i[1] for i in tv], 
                                  'attractiveness': [i[1]-i[0] for i in tv]})
-        
         # Make the grid
         
         f=open('../centers_long_lat_id_mesh_space=0.0025.pickle','rb')
@@ -163,40 +159,45 @@ def index():
             json.dump(grid_json, outfile)
         # Make the map
         
-        map_1 = folium.Map(location=[40.74006, -73.98605], zoom_start=12, tiles='Stamen Terrain')
+        map_1 = folium.Map(location=[40.74006, -73.98605], zoom_start=13, tiles='Stamen Terrain',width=800, height = 800)
         map_1.lat_lng_popover()
         
-        ##############################################################################
-        ################ADD MAIN IN AND OUT NETWORK HUBS##############################
+        #############################################################################
+        ###############ADD MAIN IN AND OUT NETWORK HUBS##############################
+        
         net = network.loc(axis=0)[app.timeofday,:,:,:]
+        net = net.reset_index()
         net = net[['pickup_center','dropoff_center',0]]
         net = np.array(net)
         net = net.astype(int)
         g=nx.MultiDiGraph()
         g.add_weighted_edges_from(net,weight='weight')
         outdegrees = g.out_degree(weight='weight')
-        outdegrees = np.array([[i, outdegrees[i]] for i in outdegrees])
-        outdegrees.sort(axis=0)
+        outdegrees = [[i, outdegrees[i]] for i in outdegrees]
+        outdegrees = sorted(outdegrees,key=lambda x: x[1])
         outdegrees = outdegrees[-5:]
-
+        
         net = network.loc(axis=0)[:,app.timeofday,:,:]
+        net = net.reset_index()
         net = net[['pickup_center','dropoff_center',0]]
         net = np.array(net)
         net = net.astype(int)
         g=nx.MultiDiGraph()
         g.add_weighted_edges_from(net,weight='weight')
         indegrees = g.in_degree(weight='weight')
-        indegrees = np.array([[i, indegrees[i]] for i in indegrees])
-        indegrees.sort(axis=0)
+        indegrees = [[i, indegrees[i]] for i in indegrees]
+        indegrees = sorted(indegrees,key=lambda x: x[1])
         indegrees = indegrees[-5:]
         
         for i in outdegrees:
             location = get_center_coordinates(i[0],x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
-            map_1.simple_marker(location=location, popup="Number of trips from hub: "+str(i[1]),marker_color='orange')
+            map_1.circle_marker(location=(location[1],location[0]), radius=80, popup="Number of trips from hub: "+str(i[1]),
+                            fill_color='green',line_color='green',fill_opacity=0.7)        
         
         for i in indegrees:
             location = get_center_coordinates(i[0],x_min=x_min,x_max=x_max,y_min=y_min,y_max=y_max,mesh_space=mesh_space)
-            map_1.simple_marker(location=location, popup="Number of trips to hub: "+str(i[1]),marker_color='green')
+            map_1.circle_marker(location=(location[1],location[0]), radius=50, popup="Number of trips to hub: "+str(i[1]),
+                                fill_color='blue',line_color='blue',fill_opacity=0.7)
         
         ##########################################################################################
         ##########################################################################################
@@ -205,10 +206,8 @@ def index():
         ###############ADD MARKER AT CHOSEN ADDRESS###############################################
         
         if app.address != False: #add a marker at my address
-            map_1.simple_marker(location=(my_latitude,my_longitude),popup=str(app.formatted_address),marker_color='red')
-            #map_1.polygon_marker(location=(my_latitude,my_longitude),line_opacity=0.5,
-            #                    line_weight=1,fill_color='black',fill_opacity=0.6,num_sides=5,
-            #                    popup=str(app.formatted_address))        
+            map_1.circle_marker(location=(my_latitude,my_longitude),radius=60,popup=str(app.formatted_address),line_color='red',
+                  fill_color='red', fill_opacity=0.4)
 
         ##########################################################################################
         ##########################################################################################
@@ -219,7 +218,7 @@ def index():
         if app.address != False:
             for index, row in gr.iterrows():
                 p_f = get_center_coordinates(index,x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max,mesh_space=mesh_space)
-                map_1.line(locations=[(my_latitude, my_longitude), (p_f[1], p_f[0])],line_weight=2,line_opacity=1,line_color='black',popup=str(int(row))+" trips")            
+                map_1.line(locations=[(my_latitude, my_longitude), (p_f[1], p_f[0])],line_weight=3,line_opacity=1,line_color='black',popup=str(int(row))+" trips")            
         
         ##########################################################################################
         ##########################################################################################
@@ -241,7 +240,6 @@ def index():
         ##########################################################################################
         ##############Create map and prepare Flask variables######################################
         
-        map_1.map_size = {'width': 800, 'height': 800}
         map_1.create_map(path='nyc.html')        
         soup = bs(open('nyc.html'), 'html.parser') 
         app.map_head = soup.head
@@ -283,4 +281,4 @@ def graph_page():
                             script_graph2=Markup(app.script_graph2) ,div_graph2=Markup(app.div_graph2))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
